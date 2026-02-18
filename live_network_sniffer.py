@@ -32,13 +32,21 @@ except Exception as e:
 flows = defaultdict(lambda: {
     'packets': deque(maxlen=1000),
     'last_seen': None,
-    'blocked': False
+    'blocked': False,
+    'prediction_count': 0
 })
 
 # Thresholds
 FLOW_TIMEOUT = 60  # seconds
 ATTACK_THRESHOLD = 0.57
 WINDOW_SIZE = 100  # packets per flow for feature extraction
+
+# Stats
+stats = {
+    'total_packets': 0,
+    'attacks_detected': 0,
+    'last_summary': datetime.now()
+}
 
 def extract_features_from_flow(packet_list):
     """Extract 77 features from a packet flow (matching training features)."""
@@ -139,17 +147,27 @@ def packet_callback(packet):
             is_safe, confidence = predict_flow(src_ip, packets_list[-WINDOW_SIZE:])
             
             if is_safe is not None:
-                status = '✓ SAFE' if is_safe else '✗ ATTACK'
-                color = '\033[92m' if is_safe else '\033[91m'  # Green/Red
-                reset = '\033[0m'
-                timestamp = datetime.now().strftime('%H:%M:%S')
+                flows[src_ip]['prediction_count'] += 1
+                stats['total_packets'] += WINDOW_SIZE
                 
-                print(f"[{timestamp}] {color}{src_ip:15} → {status}{reset} ({confidence:.1%} confidence)")
-                
-                # Mark as blocked if attack
+                # Only print attacks in real-time
                 if not is_safe:
-                    flows[src_ip]['blocked'] = True
+                    status = '✗ ATTACK'
+                    reset = '\033[0m'
+                    timestamp = datetime.now().strftime('%H:%M:%S')
+                    
+                    print(f"[{timestamp}] {src_ip:15} → {status}{reset} ({confidence:.1%} confidence)")
                     print(f"           ⚠ Blocking {src_ip}")
+                    
+                    flows[src_ip]['blocked'] = True
+                    stats['attacks_detected'] += 1
+                
+                # Print summary every 10 seconds
+                now = datetime.now()
+                if (now - stats['last_summary']).total_seconds() >= 10:
+                    active_flows = len([f for f in flows.values() if (now - f['last_seen']).total_seconds() < FLOW_TIMEOUT])
+                    print(f"[{now.strftime('%H:%M:%S')}] Status: {stats['total_packets']} packets | {active_flows} flows | {stats['attacks_detected']} attacks")
+                    stats['last_summary'] = now
         
         # Cleanup old flows
         now = datetime.now()
