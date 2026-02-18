@@ -1,0 +1,7 @@
+
+CV run: 2026-02-18T09:49:03.662494
+n_splits: 5, random_state: 42
+Aggregate accuracy: 0.999888 (std 0.000016)
+Aggregate precision: 0.999834 (std 0.000096)
+Aggregate recall: 0.999570 (std 0.000084)
+Aggregate f1: 0.999702 (std 0.000042)
