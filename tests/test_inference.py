@@ -1,6 +1,7 @@
 import joblib
 import pandas as pd
 import os
+import pytest
 
 
 def test_model_and_scaler_load():
@@ -9,6 +10,8 @@ def test_model_and_scaler_load():
 
 
 def test_inference_output_shape_and_types():
+    if not os.path.exists("X_test.parquet"):
+        pytest.skip("X_test.parquet not available in CI")
     model = joblib.load("models/final_random_forest_model.joblib")
     scaler = joblib.load("models/scaler.joblib")
 

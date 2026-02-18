@@ -2,10 +2,13 @@ import os
 import sys
 import subprocess
 import pandas as pd
+import pytest
 
 
 def test_mitigation_runs_and_logs(tmp_path):
     # create a small sample input from X_test
+    if not os.path.exists("X_test.parquet"):
+        pytest.skip("X_test.parquet not available in CI")
     X_test = pd.read_parquet("X_test.parquet")
     small = X_test.head(200)
     input_path = tmp_path / "small_X.parquet"
