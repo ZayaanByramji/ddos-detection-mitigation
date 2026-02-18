@@ -1,0 +1,70 @@
+# Git and version control
+.git
+.gitignore
+.github
+
+# Python related
+__pycache__
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Testing and coverage
+.pytest_cache
+.coverage
+htmlcov/
+.tox/
+
+# Logs and temp files
+*.log
+logs/
+tmp/
+*.tmp
+
+# Datasets (exclude large data files from container)
+*.parquet
+*.csv
+*.xlsx
+
+# Jupyter
+.ipynb_checkpoints
+*.ipynb
+
+# Results and model artifacts (can be volume-mounted)
+results/
+models/
+
+# CI/CD
+.github/workflows/*.yml
